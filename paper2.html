@@ -42,13 +42,17 @@
         input[type="text"] { width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 1em; box-sizing: border-box; }
         input[type="text"]:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px #e0e7ff; }
 
-        /* MCQ & TF */
+        /* MCQ & General Options */
         .mcq-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
-        .mcq-opt { padding: 12px; border: 2px solid var(--border); border-radius: 8px; cursor: pointer; transition: 0.2s; font-weight: 500; background: white; }
-        .mcq-opt:hover { background: #f9fafb; border-color: var(--primary); }
-        .mcq-opt.selected { background: #e0e7ff; border-color: var(--primary); color: var(--primary); font-weight: bold; }
-        .mcq-opt.correct { background: #dcfce7 !important; border-color: var(--correct) !important; color: #14532d; }
-        .mcq-opt.wrong { background: #fee2e2 !important; border-color: var(--wrong) !important; color: #7f1d1d; opacity: 0.6; }
+        .option-box { padding: 15px; border: 2px solid var(--border); border-radius: 8px; cursor: pointer; transition: 0.2s; font-weight: 600; background: white; text-align: left; }
+        .option-box:hover { background: #f9fafb; border-color: var(--primary); }
+        .option-box.selected { background: #e0e7ff; border-color: var(--primary); color: var(--primary); }
+        .option-box.correct { background: #dcfce7 !important; border-color: var(--correct) !important; color: #14532d; }
+        .option-box.wrong { background: #fee2e2 !important; border-color: var(--wrong) !important; color: #7f1d1d; opacity: 0.6; }
+
+        /* True/False Specific */
+        .tf-grid { display: flex; gap: 15px; margin-top: 10px; }
+        .tf-btn { flex: 1; text-align: center; font-size: 1.1em; padding: 15px; }
 
         /* Matching */
         .match-grid { background: #f9fafb; padding: 15px; border-radius: 8px; border: 1px solid var(--border); }
@@ -188,7 +192,7 @@
                 title: "5. Souvenirs de Guerre (Caen)",
                 url: "https://audio-lingua.ac-versailles.fr/IMG/mp3/bombes_caen.mp3",
                 questions: [
-                    { t: 'input', cat: 'detail', q: "Dans quelle ville normande se passe l'histoire ?", a: "Caen" },
+                    { t: 'input', cat: 'detail', q: "Dans quelle ville normande se passe ce souvenir ?", a: "Caen" },
                     { t: 'num', cat: 'num', q: "Quelle différence d'âge avec sa sœur ?", a: "6" },
                     { t: 'input', cat: 'num', q: "Quel âge avait la narratrice environ ?", a: "6" },
                     { t: 'mcq', cat: 'detail', q: "Où la mère cachait-elle les enfants ?", o: ["Dans une cave", "Contre un mur avec un matelas", "Sous un lit"], a: 1 },
@@ -363,7 +367,7 @@
                     { t: 'mcq', cat: 'detail', q: "Bruit entendu ?", o: ["Sirènes", "Musique", "Tonnerre"], a: 0 },
                     { t: 'tf', cat: 'detail', q: "Elle est rentrée chez elle tout de suite.", a: false, expl: "Cachée dans une cave." },
                     { t: 'input', cat: 'detail', q: "Transport laissé au pont ?", a: "vélo" },
-                    { t: 'mcq', cat: 'detail', q: "Qui gardait le pont ?", o: ["Police allemande", "Résistants", "Américains"], a: 0 },
+                    { t: 'mcq', cat: 'detail', q: "Qui gardait le pont ?", o: ["Police allemande", "Américains", "Personne"], a: 0 },
                     { t: 'match', cat: 'detail', q: "Description Allemands :", p: {"Tête": "Casqués", "Ceinture": "Chaîne", "Bottes": "Bottés"} },
                     { t: 'tf', cat: 'global', q: "Elle avait peur des chiens.", a: true }
                 ]
@@ -399,7 +403,6 @@
         let catScores = { global: {g:0, m:0}, detail: {g:0, m:0}, num: {g:0, m:0} };
 
         // --- GLOBAL FUNCTIONS ---
-        // These MUST be global for the HTML onclick to find them
         window.startExam = function() {
             try {
                 currentExam = [...database].sort(() => 0.5 - Math.random()).slice(0, 3);
@@ -450,14 +453,14 @@
                     html += `<div class="mcq-grid">`;
                     const opts = q.o.map((val, idx) => ({val, idx})).sort(() => 0.5 - Math.random());
                     opts.forEach(opt => {
-                        html += `<div class="mcq-opt" onclick="selectMCQ(this, '${i}', '${opt.idx}')">${opt.val}</div>`;
+                        html += `<div class="option-box mcq-opt" onclick="selectMCQ(this, '${i}', '${opt.idx}')">${opt.val}</div>`;
                     });
                     html += `<input type="hidden" id="ans-${i}"></div>`;
                 }
                 else if(q.t === 'tf') {
-                    html += `<div class="tf-container">
-                        <div class="tf-btn" onclick="selectTF(this, '${i}', 'true')">VRAI</div>
-                        <div class="tf-btn" onclick="selectTF(this, '${i}', 'false')">FAUX</div>
+                    html += `<div class="tf-grid">
+                        <div class="option-box tf-btn" onclick="selectTF(this, '${i}', 'true')">VRAI</div>
+                        <div class="option-box tf-btn" onclick="selectTF(this, '${i}', 'false')">FAUX</div>
                         <input type="hidden" id="ans-${i}">
                     </div>`;
                 }
@@ -485,7 +488,6 @@
             });
         }
 
-        // Renamed functions attached to window
         window.selectMCQ = function(el, qId, val) {
             el.parentNode.querySelectorAll('.mcq-opt').forEach(e => e.classList.remove('selected'));
             el.classList.add('selected');
@@ -505,7 +507,7 @@
 
                 data.questions.forEach((q, i) => {
                     const feed = document.getElementById(`feed-${i}`);
-                    if(!feed) return; // safety check
+                    if(!feed) return; 
 
                     let isRight = false;
                     catScores[q.cat].m++;
@@ -533,7 +535,6 @@
                         const ans = String(q.a).toLowerCase().replace(',','.');
                         
                         if (val === ans || (val.length > 2 && ans.includes(val))) isRight = true;
-                        // Special logic for bonus words
                         if ((ans === "chewing-gums" && val.includes("bonbon")) || (ans==="bonbons" && val.includes("chewing"))) isRight = true;
                     }
 
