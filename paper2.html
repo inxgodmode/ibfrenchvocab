@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🇫🇷 IB French Listening - Exam Simulator</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Merriweather:wght@400;700&display=swap');
+
+        :root {
+            --bg: #fdfbf7; /* Paper tone */
+            --paper: #ffffff;
+            --primary: #2c3e50;
+            --accent: #3498db;
+            --correct: #27ae60;
+            --wrong: #c0392b;
+            --border: #bdc3c7;
+            --text: #2c3e50;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: var(--paper);
+            padding: 50px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border: 1px solid #e0e0e0;
+            min-height: 80vh;
+            position: relative;
+        }
+
+        /* HEADER */
+        .exam-header {
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 20px;
+            margin-bottom: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+        .exam-title { font-family: 'Merriweather', serif; font-size: 2em; font-weight: 700; margin: 0; }
+        .exam-meta { text-align: right; font-size: 0.9em; color: #7f8c8d; }
+        
+        /* AUDIO PLAYER */
+        .audio-wrapper {
+            background: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 40px;
+            border: 1px solid var(--border);
+        }
+        audio { width: 100%; max-width: 600px; margin-top: 10px; }
+        .track-name { font-weight: 700; font-size: 1.2em; color: var(--accent); }
+
+        /* QUESTIONS */
+        .question-block {
+            margin-bottom: 35px;
+            padding-left: 20px;
+            border-left: 4px solid transparent;
+            transition: 0.3s;
+        }
+        .question-block:hover { border-left-color: var(--accent); background: #f9fbfd; }
+        
+        .q-header { display: flex; gap: 10px; margin-bottom: 10px; }
+        .q-num { font-weight: 900; color: var(--accent); min-width: 25px; }
+        .q-text { font-weight: 500; font-size: 1.1em; line-height: 1.5; }
+        .tag { font-size: 0.7em; background: #e0e0e0; padding: 2px 6px; border-radius: 4px; vertical-align: middle; height: fit-content; }
+
+        /* INPUT TYPES */
+        input[type="text"] {
+            border: none;
+            border-bottom: 2px solid var(--border);
+            background: transparent;
+            font-size: 1.1em;
+            padding: 5px;
+            width: 50%;
+            transition: 0.3s;
+            color: var(--primary);
+        }
+        input[type="text"]:focus { outline: none; border-bottom-color: var(--accent); }
+
+        /* MCQ */
+        .mcq-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 10px; margin-top: 10px; }
+        .mcq-opt {
+            border: 1px solid var(--border);
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.95em;
+        }
+        .mcq-opt:hover { background: #eaf2f8; border-color: var(--accent); }
+        .mcq-opt.selected { background: var(--primary); color: white; border-color: var(--primary); }
+        .mcq-opt.correct { background: var(--correct) !important; color: white; border-color: var(--correct); }
+        .mcq-opt.wrong { background: var(--wrong) !important; color: white; border-color: var(--wrong); opacity: 0.7; }
+
+        /* MATCHING */
+        .match-container { background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid var(--border); }
+        .match-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 10px; align-items: center; }
+        select { width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ccc; }
+
+        /* TRUE FALSE */
+        .tf-container { display: flex; gap: 10px; max-width: 300px; margin-top: 10px; }
+        .tf-btn { flex: 1; padding: 10px; border: 1px solid var(--border); text-align: center; cursor: pointer; font-weight: bold; border-radius: 4px; }
+        .tf-btn.selected { background: var(--primary); color: white; }
+
+        /* FEEDBACK */
+        .feedback { margin-top: 10px; font-weight: bold; font-size: 0.9em; padding: 8px; border-radius: 4px; display: none; }
+        .feedback.good { background: #d5f5e3; color: #1e8449; }
+        .feedback.bad { background: #fadbd8; color: #7b241c; }
+
+        /* FOOTER */
+        .footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+        }
+        .btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1em;
+            border-radius: 6px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: 0.2s;
+        }
+        .btn:hover { background: #2980b9; transform: translateY(-2px); }
+        .btn:disabled { background: #bdc3c7; cursor: not-allowed; transform: none; }
+
+        .hidden { display: none !important; }
+        
+        /* RESULTS */
+        .result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 30px 0; }
+        .stat-card { background: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid var(--border); }
+        .stat-val { font-size: 1.5em; font-weight: bold; display: block; margin-top: 5px; color: var(--primary); }
+    </style>
+</head>
+<body>
+
+    <!-- INTRO -->
+    <div id="intro" class="container" style="text-align: center; padding-top: 100px;">
+        <h1 class="exam-title" style="font-size: 2.5em; color: var(--accent);">Épreuve de Compréhension Orale</h1>
+        <p style="color: #7f8c8d; font-size: 1.2em;">Baccalauréat International • Français B (NM)</p>
+        
+        <div style="background: #fdfbf7; border: 2px dashed var(--border); padding: 30px; margin: 40px auto; max-width: 600px; text-align: left;">
+            <h3>Consignes :</h3>
+            <ul style="line-height: 1.8;">
+                <li>L'examen génère <strong>3 textes audio aléatoires</strong> parmi 18.</li>
+                <li>Chaque texte contient environ <strong>8 à 10 questions</strong>.</li>
+                <li>Les questions suivent <strong>l'ordre chronologique</strong> de l'audio.</li>
+                <li>Types de questions : QCM, Vrai/Faux, Textes à trous, Correspondance.</li>
+            </ul>
+        </div>
+        <button class="btn" onclick="startExam()">COMMENCER L'ÉPREUVE</button>
+    </div>
+
+    <!-- EXAM UI -->
+    <div id="exam-ui" class="container hidden">
+        <div class="exam-header">
+            <div>
+                <div class="exam-title">Texte <span id="track-num">1</span> / 3</div>
+                <div style="color: var(--accent);">IB French B SL Simulator</div>
+            </div>
+            <div class="exam-meta">
+                Temps écoulé<br>
+                <span id="timer" style="font-family: monospace; font-size: 1.5em; font-weight: bold;">00:00</span>
+            </div>
+        </div>
+
+        <div class="audio-wrapper">
+            <div class="track-name" id="track-title">Chargement...</div>
+            <audio id="player" controls controlsList="nodownload"><source id="audio-src" src="" type="audio/mpeg"></audio>
+        </div>
+
+        <div id="questions-container">
+            <!-- Questions injected here -->
+        </div>
+
+        <div class="footer">
+            <button class="btn" id="action-btn" onclick="checkAnswers()">Valider les réponses</button>
+        </div>
+    </div>
+
+    <!-- RESULTS -->
+    <div id="results" class="container hidden" style="text-align: center;">
+        <h1 class="exam-title">Fin de l'épreuve</h1>
+        <div style="font-size: 5em; font-weight: 900; color: var(--accent); margin: 20px 0;" id="final-score">--/--</div>
+        
+        <div class="result-grid">
+            <div class="stat-card">
+                <span>Précision</span>
+                <span class="stat-val" id="res-acc">0%</span>
+            </div>
+            <div class="stat-card">
+                <span>Temps Total</span>
+                <span class="stat-val" id="res-time">00:00</span>
+            </div>
+            <div class="stat-card">
+                <span>Temps Moyen / Piste</span>
+                <span class="stat-val" id="res-avg">0s</span>
+            </div>
+            <div class="stat-card" style="border-color: var(--wrong);">
+                <span style="color:var(--wrong)">Point à travailler</span>
+                <span class="stat-val" id="res-weak" style="color:var(--wrong)">-</span>
+            </div>
+        </div>
+
+        <div id="api-status" style="margin-top:20px; color:#95a5a6; font-style: italic;">Envoi des résultats...</div>
+        <button class="btn" onclick="location.reload()" style="margin-top:20px;">Générer un nouveau test</button>
+    </div>
+
+    <script>
+        // =========================================================
+        // 📚 DATABASE (18 Tracks - Full IB Format)
+        // =========================================================
+        const fullDatabase = [
+            {
+                title: "Berlin (Série Netflix)",
+                url: "https://audio-lingua.ac-versailles.fr/IMG/mp3/berlin.mp3",
+                questions: [
+                    { t: 'mcq', cat: 'global', q: "De quelle série 'Berlin' est-elle le spin-off ?", o: ["Lupin", "La Casa de Papel", "Elite"], a: 1 },
+                    { t: 'tf', cat: 'detail', q: "L'histoire se déroule après la mort de Berlin.", a: false, expl: "C'est un préquel (avant)." },
+                    { t: 'input', cat: 'detail', q: "Quel est le prénom du personnage principal ?", a: "andrès" },
+                    { t: 'input', cat: 'detail', q: "Dans quelle ville européenne se passe l'action ?", a: "paris" },
+                    { t: 'num', cat: 'num', q: "Quelle est la valeur du butin (en millions d'euros) ?", a: "44" },
+                    { t: 'num', cat: 'num', q: "De combien de villes proviennent les joyaux ?", a: "34" },
+                    { t: 'tf', cat: 'global', q: "La série est plus violente que la série originale.", a: false, expl: "Elle est moins violente, plus romantique." },
+                    { t: 'mcq', cat: 'detail', q: "En combien de temps le braquage doit-il être fait ?", o: ["Une semaine", "Une seule soirée", "Trois jours"], a: 1 },
+                    { t: 'input', cat: 'num', q: "Quel mois la série est-elle sortie (2024) ?", a: "janvier" },
+                    { t: 'match', cat: 'detail', q: "Associez les éléments :", p: {"Andrès": "Berlin", "Lieu": "Bijouterie", "Genre": "Romantique"} }
+                ]
+            },
+            {
+                title: "Hôtel de la Marine",
+                url: "https://audio-lingua.ac-versailles.fr/IMG/mp3/constantin_l_hotel_de_la_marine_a_paris.mp3",
+                questions: [
+                    { t: 'mcq', cat: 'detail', q: "Sur quelle place se situe le monument ?", o: ["Bastille", "Concorde", "Vendôme"], a: 1 },
+                    { t: 'input', cat: 'num', q: "En quelle année a-t-il ouvert au public ?", a: "2021" },
+                    { t: 'input', cat: 'num', q: "De quel siècle date la construction ?", a: "18" },
+                    { t: 'tf', cat: 'detail', q: "Avant la Révolution, c'était le Ministère de la Marine.", a: false, expl: "C'était le Garde-Meuble du Roi." },
+                    { t: 'mcq', cat: 'detail', q: "Pourquoi a-t-on nettoyé les façades ?", o: ["À cause des graffitis", "À cause de la pollution", "Pour changer la couleur"], a: 1 },
+                    { t: 'match', cat: 'detail', q: "Associez les lieux :", p: {"Salle de Bal": "Galerie des Glaces", "Appartements": "Intendant", "Loggia": "Vue sur la place"} },
+                    { t: 'tf', cat: 'global', q: "Le narrateur a apprécié l'audioguide.", a: false, expl: "Il l'a trouvé gênant." },
+                    { t: 'mcq', cat: 'detail', q: "Qui recevait des invités dans ce bâtiment ?", o: ["Le Président de la République", "Napoléon", "Le Maire"], a: 0 },
+                    { t: 'input', cat: 'detail', q: "Quel est l'hôtel de luxe situé à côté ?", a: "crillon" }
+                ]
+            },
+            {
+                title: "Le Puy du Fou",
+                url: "https://audio-lingua.ac-versailles.fr/IMG/mp3/puy_du_fou.mp3",
+                questions: [
+                    { t: 'input', cat: 'detail', q: "Dans quel département se trouve le parc ?", a: "vendée" },
+                    { t: 'num', cat: 'num', q: "Quel est le prix du billet adulte (en €) ?", a: "44" },
+                    { t: 'num', cat: 'num', q: "Le parc est ouvert de 9h30 à ___ h 30.", a: "22" },
+                    { t: 'tf', cat: 'detail', q: "Le spectacle 'Le Mime et l'Étoile' est en couleur.", a: false, expl: "Il est en noir et blanc." },
+                    { t: 'match', cat: 'detail', q: "Associez :", p: {"Vikings": "Drakkars", "Verdun": "Tranchées", "Signe du Triomphe": "Gladiateurs"} },
+                    { t: 'mcq', cat: 'detail', q: "Combien d'oiseaux participent au 'Bal des Oiseaux Fantômes' ?", o: ["Une dizaine", "Une cinquantaine", "Une centaine"], a: 2 },
+                    { t: 'tf', cat: 'global', q: "L'élève a eu peur pendant le spectacle de Verdun.", a: true },
+                    { t: 'mcq', cat: 'detail', q: "Que font les drakkars des Vikings ?", o: ["Ils volent", "Ils surgissent de l'eau", "Ils brûlent"], a: 1 },
+                    { t: 'input', cat: 'detail', q: "Quelle course voit-on dans le 'Signe du Triomphe' ? Une course de ___.", a: "chars" }
+                ]
+            },
+            {
+                title: "Match de Football",
+                url: "https://audio-lingua.ac-versailles.fr/IMG/mp3/stephane_un_beau_match_de_foot.mp3",
+                questions: [
+                    { t: 'mcq', cat: 'detail', q: "Quelles équipes s'affrontaient ?", o: ["PSG vs Bayern", "Manchester City vs Real Madrid", "Chelsea vs Barcelone"], a: 1 },
+                    { t: 'num', cat: 'num', q: "Quelle était la date du match (jour et mois) ?", a: "26 avril" },
+                    { t: 'mcq', cat: 'detail', q: "À quel stade de la compétition ?", o: ["Finale", "Demi-finale", "Match de poule"], a: 1 },
+                    { t: 'input', cat: 'detail', q: "Quel joueur français a marqué deux buts ?", a: "benzema" },
+                    { t: 'tf', cat: 'detail', q: "Le match était très violent avec beaucoup de fautes.", a: false, expl: "Très peu de fautes." },
+                    { t: 'mcq', cat: 'global', q: "Pourquoi le narrateur aime les clubs anglais ?", o: ["Ils jouent vite / Espace", "Ils ont de l'argent", "Ils défendent bien"], a: 0 },
+                    { t: 'tf', cat: 'detail', q: "Les joueurs couraient beaucoup ensemble (pressing).", a: true },
+                    { t: 'input', cat: 'num', q: "Combien de buts Benzema a-t-il marqués ?", a: "2" },
+                    { t: 'mcq', cat: 'global', q: "Pour les spectateurs, ce match était un...", o: ["Ennui", "Régal", "Désastre"], a: 1 }
+                ]
+            },
+            {
+                title: "Souvenirs de Guerre (Caen)",
+                url: "https://audio-lingua.ac-versailles.fr/IMG/mp3/bombes_caen.mp3",
+                questions: [
+                    { t: 'input', cat: 'detail', q: "Dans quelle ville se passe ce souvenir ?", a: "caen" },
+                    { t: 'num', cat: 'num', q: "Quelle différence d'âge avec sa sœur ?", a: "6" },
+                    { t: 'input', cat: 'num', q: "Quel âge avait la narratrice environ ?", a: "6" },
+                    { t: 'mcq', cat: 'detail', q: "Où la mère cachait-elle les enfants ?", o: ["Dans une cave", "Contre un mur avec un matelas", "Sous un lit"], a: 1 },
+                    { t: 'tf', cat: 'detail', q: "Il y avait des tranchées au milieu de la rue.", a: true },
+                    { t: 'mcq', cat: 'detail', q: "Comment les bombes tombaient-elles ?", o: ["Par ricochet", "Verticalement", "Par parachute"], a: 0 },
+                    { t: 'tf', cat: 'global', q: "La narratrice se rend compte aujourd'hui de la gravité.", a: true },
+                    { t: 'input', cat: 'detail', q: "Que criaient les gens à la fin ?", a: "bravo" },
+                    { t: 'mcq', cat: 'detail', q: "Que voyaient-ils passer avant de se cacher ?", o: ["Des chars", "Des avions", "Des bateaux"], a: 1 }
+                ]
+            },
+            {
+                title: "L'Arc de Triomphe Empaqueté",
+                url: "https://audio-lingua.ac-versailles.fr/IMG/mp3/arc_de_triomphe_empaquete_manue.mp3",
+                questions: [
+                    { t: 'mcq', cat: 'detail', q: "Qui sont les artistes ?", o: ["Christo et Jeanne-Claude", "Dali et Gala", "Rodin et Claudel"], a: 0 },
+                    { t: 'num', cat: 'num', q: "Combien de semaines l'installation a-t-elle duré ?", a: "3" },
+                    { t: 'tf', cat: 'detail', q: "La Place de l'Étoile est restée ouverte aux voitures.", a: false, expl: "Fermée à la circulation." },
+                    { t: 'mcq', cat: 'detail', q: "Quelle couleur avait le tissu ?", o: ["Argenté / Recyclable", "Rouge", "Doré"], a: 0 },
+                    { t: 'tf', cat: 'global', q: "Les artistes étaient vivants lors de l'inauguration.", a: false },
+                    { t: 'match', cat: 'global', q: "Concept de l'œuvre :", p: {"Cacher": "Pour révéler", "Éphémère": "Urgence", "Matériau": "Recyclable"} },
+                    { t: 'input', cat: 'detail', q: "Quelle place a été fermée ?", a: "étoile" },
+                    { t: 'mcq', cat: 'detail', q: "Comment le monument paraissait-il ?", o: ["Plus grand", "Plus petit", "Invisible"], a: 0 }
+                ]
+            },
+            {
+                title: "Lac de l'Eychauda",
+                url: "https://audio-lingua.ac-versailles.fr/IMG/mp3/lac_de_l_eychauda.mp3",
+                questions: [
+                    { t: 'input', cat: 'detail', q: "Dans quel massif montagneux sont-ils ?", a: "écrins" },
+                    { t: 'num', cat: 'num', q: "À quelle altitude se trouve le lac ?", a: "2514" },
+                    { t: 'mcq', cat: 'detail', q: "D'où vient l'eau du lac ?", o: ["D'un glacier", "D'une source", "De la pluie"], a: 0 },
+                    { t: 'input', cat: 'detail', q: "Quelle est la couleur de l'eau (adjectif donné) ?", a: "laiteux" },
+                    { t: 'mcq', cat: 'detail', q: "Qu'ont-ils vu flotter sur l'eau ?", o: ["Des icebergs", "Des bateaux", "Des feuilles"], a: 0 },
+                    { t: 'num', cat: 'num', q: "Combien d'heures de marche pour l'atteindre ?", a: "5" },
+                    { t: 'num', cat: 'num', q: "Quelle distance totale ont-ils parcourue ?", a: "15" },
+                    { t: 'tf', cat: 'global', q: "Il faut partir tard le matin.", a: false, expl: "Partir tôt (7h30)." }
+                ]
+            },
+            {
+                title: "Le Film Wonka",
+                url: "https://audio-lingua.ac-versailles.fr/IMG/mp3/wonka.mp3",
+                questions: [
+                    { t: 'mcq', cat: 'global', q: "De quel auteur vient l'histoire ?", o: ["Roald Dahl", "J.K. Rowling", "Victor Hugo"], a: 0 },
+                    { t: 'input', cat: 'detail', q: "Métier de Wonka (autre que chocolatier) ?", a: "magicien" },
+                    { t: 'input', cat: 'detail', q: "Qui joue le rôle principal ?", a: "chalamet" },
+                    { t: 'mcq', cat: 'detail', q: "Quel genre de film est-ce ?", o: ["Comédie musicale", "Thriller", "Documentaire"], a: 0 },
+                    { t: 'match', cat: 'detail', q: "Acteur / Rôle :", p: {"Hugh Grant": "Oompa Loompa", "Atkinson": "Prêtre", "Colman": "Méchante"} },
+                    { t: 'tf', cat: 'global', q: "Le film est très sombre.", a: false, expl: "C'est coloré et féérique." },
+                    { t: 'mcq', cat: 'detail', q: "Pour quelle récompense a-t-il été nominé ?", o: ["Golden Globes", "Oscars", "Cannes"], a: 0 },
+                    { t: 'tf', cat: 'detail', q: "La narratrice a vu le film en VF.", a: false, expl: "En version originale." }
+                ]
+            },
+            {
+                title: "Épicerie Participative",
+                url: "https://audio-lingua.ac-versailles.fr/IMG/mp3/fredericparc-naturel-re_gional-de-la-haute-valle_e-de-chevreuse.mp3",
+                questions: [
+                    { t: 'input', cat: 'detail', q: "Prénom du narrateur ?", a: "frédéric" },
+                    { t: 'num', cat: 'num', q: "Nombre d'habitants dans le village ?", a: "500" },
+                    { t: 'mcq', cat: 'detail', q: "Jour d'ouverture ?", o: ["Samedi", "Dimanche", "Lundi"], a: 0 },
+                    { t: 'num', cat: 'num', q: "Année d'ouverture de l'épicerie ?", a: "2021" },
+                    { t: 'tf', cat: 'detail', q: "Il y a 100 membres.", a: false, expl: "Une vingtaine." },
+                    { t: 'mcq', cat: 'global', q: "Quel est l'objectif social ?", o: ["Convivialité", "Profit", "Élections"], a: 0 },
+                    { t: 'input', cat: 'detail', q: "D'où viennent les produits ?", a: "locaux" },
+                    { t: 'tf', cat: 'detail', q: "On peut boire un café sur place.", a: true },
+                    { t: 'mcq', cat: 'detail', q: "Délai de réservation des produits ?", o: ["1 ou 2 semaines", "24 heures", "1 mois"], a: 0 }
+                ]
+            },
+            {
+                title: "La Picardie",
+                url: "https://audio-lingua.ac-versailles.fr/IMG/mp3/josianevoix_001.mp3",
+                questions: [
+                    { t: 'mcq', cat: 'detail', q: "Où se situe la Picardie ?", o: ["Dans le Nord", "Dans le Sud", "À l'Est"], a: 0 },
+                    { t: 'input', cat: 'detail', q: "Capitale régionale ?", a: "amiens" },
+                    { t: 'match', cat: 'detail', q: "Lieu / Spécialité :", p: {"Chantilly": "Forêt/Château", "Pierrefonds": "Château fort", "Compiègne": "Armistice"} },
+                    { t: 'input', cat: 'detail', q: "Écrivain célèbre d'Amiens ?", a: "verne" },
+                    { t: 'mcq', cat: 'detail', q: "Que sont les 'hortillonnages' ?", o: ["Jardins sur l'eau", "Cathédrales", "Plats"], a: 0 },
+                    { t: 'tf', cat: 'detail', q: "On visite les hortillonnages en voiture.", a: false, expl: "En barque." },
+                    { t: 'mcq', cat: 'detail', q: "Quelle ville a un cachet ancien (décor de film) ?", o: ["Senlis", "Beauvais", "Lille"], a: 0 },
+                    { t: 'tf', cat: 'global', q: "La région manque de verdure.", a: false }
+                ]
+            },
+            {
+                title: "Engagement Associatif",
+                url: "https://audio-lingua.ac-versailles.fr/IMG/mp3/josianevoix_002.mp3",
+                questions: [
+                    { t: 'input', cat: 'num', q: "Âge de la narratrice ?", a: "58" },
+                    { t: 'mcq', cat: 'detail', q: "Son métier ?", o: ["Professeur", "Médecin", "Comptable"], a: 0 },
+                    { t: 'num', cat: 'num', q: "Nombre d'associations ?", a: "2" },
+                    { t: 'match', cat: 'detail', q: "Rôle / Asso :", p: {"Profs": "Trésorière", "Voitures": "Secrétaire"} },
+                    { t: 'tf', cat: 'detail', q: "L'asso de voitures publie un bulletin 3 fois par an.", a: true },
+                    { t: 'mcq', cat: 'global', q: "Pourquoi s'engage-t-elle ?", o: ["Pour être utile", "Pour l'argent", "Pour voyager"], a: 0 },
+                    { t: 'input', cat: 'detail', q: "Que récolte-t-elle pour les profs ?", a: "cotisations" },
+                    { t: 'tf', cat: 'global', q: "Elle pense qu'il faut rester replié sur soi.", a: false }
+                ]
+            },
+            {
+                title: "Le Cirque 100% Humain",
+                url: "https://audio-lingua.ac-versailles.fr/IMG/mp3/le_cirque.mp3",
+                questions: [
+                    { t: 'mcq', cat: 'global', q: "Quelle est la particularité de ce cirque ?", o: ["Pas d'animaux", "Gratuit", "Sous l'eau"], a: 0 },
+                    { t: 'input', cat: 'num', q: "Durée du spectacle (heures) ?", a: "2" },
+                    { t: 'mcq', cat: 'detail', q: "Lieu du chapiteau ?", o: ["Pelouse de Reuilly", "Champs de Mars", "La Défense"], a: 0 },
+                    { t: 'match', cat: 'detail', q: "Artiste / Action :", p: {"Trapézistes": "Vols", "Jongleurs": "Objets", "Funambules": "Moto sur fil"} },
+                    { t: 'num', cat: 'num', q: "Capacité max du chapiteau ?", a: "3000" },
+                    { t: 'tf', cat: 'detail', q: "Il faisait très chaud.", a: false, expl: "Froid (janvier)." },
+                    { t: 'mcq', cat: 'detail', q: "Qu'est-ce que la 'roue infernale' ?", o: ["Deux roues avec des acrobates", "Une moto", "Un cercle de feu"], a: 0 },
+                    { t: 'input', cat: 'num', q: "Prix moyen d'une place (euros) ?", a: "20" }
+                ]
+            },
+            {
+                title: "France Miniature",
+                url: "https://audio-lingua.ac-versailles.fr/IMG/mp3/france_miniatures.mp3",
+                questions: [
+                    { t: 'input', cat: 'detail', q: "Département ?", a: "yvelines" },
+                    { t: 'mcq', cat: 'detail', q: "Ville ?", o: ["Élancourt", "Versailles", "Rambouillet"], a: 0 },
+                    { t: 'num', cat: 'num', q: "Prix billet enfant (4-11 ans) ?", a: "21" },
+                    { t: 'num', cat: 'num', q: "Prix billet adulte ?", a: "27" },
+                    { t: 'num', cat: 'num', q: "Prix parking ?", a: "5" },
+                    { t: 'match', cat: 'detail', q: "Région / Monument :", p: {"Nord": "Cathédrale d'Amiens", "Ouest": "Mont Saint Michel", "Est": "Village Alsacien"} },
+                    { t: 'tf', cat: 'global', q: "On peut visiter toute la France en une fois.", a: true },
+                    { t: 'mcq', cat: 'detail', q: "Monument parisien cité à la fin ?", o: ["Tour Eiffel", "Louvre", "Sacré Cœur"], a: 0 }
+                ]
+            },
+            {
+                title: "La Récré des 3 Curés",
+                url: "https://audio-lingua.ac-versailles.fr/IMG/mp3/recre_des_3_cures.mp3",
+                questions: [
+                    { t: 'input', cat: 'detail', q: "Département breton ?", a: "finistère" },
+                    { t: 'mcq', cat: 'detail', q: "Ouverture ?", o: ["Avril à Novembre", "Juin à Août", "Toute l'année"], a: 0 },
+                    { t: 'num', cat: 'num', q: "Prix billet adulte ?", a: "23" },
+                    { t: 'tf', cat: 'detail', q: "Le parc est payant pour les bébés.", a: false, expl: "Gratuit -1m." },
+                    { t: 'input', cat: 'detail', q: "Nom du grand huit vertical : Le ___.", a: "vertika" },
+                    { t: 'match', cat: 'detail', q: "Attraction / Type :", p: {"Niagara": "Bouée", "Galion": "Bateau pirate", "Tuf Tuf": "Tracteurs"} },
+                    { t: 'tf', cat: 'detail', q: "Le parking est payant.", a: false },
+                    { t: 'mcq', cat: 'detail', q: "Comment faire le tour du parc ?", o: ["Petit train", "Hélicoptère", "À cheval"], a: 0 }
+                ]
+            },
+            {
+                title: "Voyage F1 en Italie",
+                url: "https://audio-lingua.ac-versailles.fr/IMG/mp3/site-170424-melyne-audio-italie.mp3",
+                questions: [
+                    { t: 'mcq', cat: 'detail', q: "Première ville visitée ?", o: ["Milan", "Rome", "Turin"], a: 0 },
+                    { t: 'input', cat: 'detail', q: "Ville du Grand Prix ?", a: "monza" },
+                    { t: 'input', cat: 'detail', q: "Lac visité ?", a: "côme" },
+                    { t: 'tf', cat: 'global', q: "C'est un voyage improvisé.", a: false, expl: "Bien planifié." },
+                    { t: 'mcq', cat: 'detail', q: "Visite à Milan ?", o: ["Cathédrale (Duomo)", "Stade", "Opéra"], a: 0 },
+                    { t: 'tf', cat: 'detail', q: "Elles vont manger dans des fast-foods.", a: false },
+                    { t: 'mcq', cat: 'global', q: "Sentiment de la narratrice ?", o: ["Impatience / Excitation", "Peur", "Ennui"], a: 0 },
+                    { t: 'input', cat: 'detail', q: "Avec qui part-elle ?", a: "amie" }
+                ]
+            },
+            {
+                title: "Spectacle au Panthéon",
+                url: "https://audio-lingua.ac-versailles.fr/IMG/mp3/pantheon_manue.mp3",
+                questions: [
+                    { t: 'input', cat: 'num', q: "Nombre de femmes ?", a: "60" },
+                    { t: 'fill', cat: 'detail', q: "Ville partenaire : ___.", a: "colombes" },
+                    { t: 'mcq', cat: 'global', q: "Forme du spectacle ?", o: ["Déambulation", "Assis", "Virtuel"], a: 0 },
+                    { t: 'tf', cat: 'detail', q: "Toutes étaient professionnelles.", a: false },
+                    { t: 'match', cat: 'detail', q: "Élément / Artiste :", p: {"Danse": "Chorégraphe pro", "Audio": "Podcasts", "Chant": "Comédiennes"} },
+                    { t: 'input', cat: 'detail', q: "Célébrité honorée ?", a: "baker" },
+                    { t: 'num', cat: 'num', q: "Durée du projet (ans) ?", a: "1" },
+                    { t: 'tf', cat: 'global', q: "Le but : questionner la place de la femme.", a: true }
+                ]
+            },
+            {
+                title: "Bombardement (8 Mars 1944)",
+                url: "https://audio-lingua.ac-versailles.fr/IMG/mp3/bombardement_8_mars_44.mp3",
+                questions: [
+                    { t: 'mcq', cat: 'detail', q: "Destination de la narratrice ?", o: ["La poste", "La gare", "L'école"], a: 0 },
+                    { t: 'fill', cat: 'detail', q: "Contenu du colis : ___.", a: "volaille" },
+                    { t: 'mcq', cat: 'detail', q: "Bruit entendu ?", o: ["Sirènes", "Musique", "Tonnerre"], a: 0 },
+                    { t: 'tf', cat: 'detail', q: "Elle est rentrée chez elle tout de suite.", a: false, expl: "Cachée dans une cave." },
+                    { t: 'input', cat: 'detail', q: "Transport utilisé ?", a: "vélo" },
+                    { t: 'mcq', cat: 'detail', q: "Qui gardait le pont ?", o: ["Police allemande", "Résistants", "Américains"], a: 0 },
+                    { t: 'match', cat: 'detail', q: "Description Allemands :", p: {"Tête": "Casqués", "Ceinture": "Chaîne", "Bottes": "Bottés"} },
+                    { t: 'tf', cat: 'global', q: "Elle avait peur des chiens.", a: true }
+                ]
+            },
+            {
+                title: "La Libération",
+                url: "https://audio-lingua.ac-versailles.fr/IMG/mp3/fin_de_la_guerre.mp3",
+                questions: [
+                    { t: 'fill', cat: 'detail', q: "Libérateurs : ___.", a: "américains" },
+                    { t: 'fill', cat: 'detail', q: "Cadeaux lancés : ___.", a: "bonbons" }, // chewing-gums ok
+                    { t: 'mcq', cat: 'global', q: "Sentiment dominant ?", o: ["Joie", "Peur", "Colère"], a: 0 },
+                    { t: 'tf', cat: 'detail', q: "Il restait beaucoup de maisons.", a: false },
+                    { t: 'input', cat: 'detail', q: "Région de la grand-mère ?", a: "finistère" },
+                    { t: 'mcq', cat: 'detail', q: "Soldats :", o: ["Debout dans les jeeps", "Cachés", "À pied"], a: 0 },
+                    { t: 'input', cat: 'detail', q: "Action des gens : Ils ___.", a: "applaudissaient" },
+                    { t: 'tf', cat: 'detail', q: "Il y avait beaucoup d'enfants.", a: false }
+                ]
+            }
+        ];
+
+        // ==========================================
+        // ⚙️ ENGINE LOGIC
+        // ==========================================
+        
+        // 🛑 PASTE YOUR GOOGLE SCRIPT URL HERE 🛑
+        const API_URL = "PASTE_YOUR_GOOGLE_SCRIPT_URL_HERE";
+
+        let currentExam = [];
+        let currentTrackIdx = 0;
+        let score = 0;
+        let maxScore = 0;
+        let startTime;
+        let catScores = { global: {g:0, m:0}, detail: {g:0, m:0}, num: {g:0, m:0} };
+
+        function startExam() {
+            // Randomly select 3 tracks (Shuffle database -> take first 3)
+            currentExam = [...database].sort(() => 0.5 - Math.random()).slice(0, 3);
+            
+            document.getElementById('intro').classList.add('hidden');
+            document.getElementById('exam-ui').classList.remove('hidden');
+            startTime = new Date();
+            loadTrack(0);
+            
+            setInterval(() => {
+                const diff = Math.floor((new Date() - startTime) / 1000);
+                const m = String(Math.floor(diff/60)).padStart(2,'0');
+                const s = String(diff%60).padStart(2,'0');
+                document.getElementById('timer').innerText = `${m}:${s}`;
+            }, 1000);
+        }
+
+        function loadTrack(idx) {
+            currentTrackIdx = idx;
+            const data = currentExam[idx];
+            document.getElementById('track-title').innerText = data.title;
+            document.getElementById('audio-src').src = data.url;
+            document.getElementById('player').load();
+            document.getElementById('track-idx').innerText = idx + 1;
+
+            const container = document.getElementById('q-container');
+            container.innerHTML = '';
+
+            data.questions.forEach((q, i) => {
+                const div = document.createElement('div');
+                div.className = 'q-block';
+                div.id = `q-${i}`;
+                // We don't store JSON in dataset anymore to prevent cheating via Inspect Element
+                // Instead, we use indices mapped to the currentExam array
+
+                let typeLabel = q.t === 'mcq' ? "QCM" : q.t === 'match' ? "Relier" : q.t === 'tf' ? "Vrai / Faux" : "Compléter";
+                
+                let html = `<div class="q-header">
+                                <div class="q-num">${i+1}</div>
+                                <div>
+                                    <div class="q-tag">${typeLabel} • ${q.cat}</div>
+                                    <div class="q-text">${q.q}</div>
+                                </div>
+                            </div>`;
+
+                if(q.t === 'mcq') {
+                    html += `<div class="mcq-grid">`;
+                    // Shuffle MCQ options while keeping track of the original correct index
+                    // If Correct Answer was index 0 (q.a = 0)
+                    // We map options to objects: [{val:"Opt1", originalIdx:0}, {val:"Opt2", originalIdx:1}]
+                    // Shuffle them.
+                    const opts = q.o.map((val, idx) => ({val, originalIdx: idx})).sort(() => 0.5 - Math.random());
+                    
+                    opts.forEach((opt, uiIdx) => {
+                        // We store the original index in the value attribute
+                        html += `<div class="mcq-opt" onclick="sel(this, '${i}', '${opt.originalIdx}')">${opt.val}</div>`;
+                    });
+                    html += `<input type="hidden" id="ans-${i}"></div>`;
+                }
+                else if(q.t === 'tf') {
+                    html += `<div class="tf-container">
+                        <div class="tf-btn" onclick="sel(this, '${i}', 'true')">VRAI</div>
+                        <div class="tf-btn" onclick="sel(this, '${i}', 'false')">FAUX</div>
+                        <input type="hidden" id="ans-${i}">
+                    </div>`;
+                }
+                else if(q.t === 'match') {
+                    html += `<div class="match-grid">`;
+                    const keys = Object.keys(q.p);
+                    const vals = Object.values(q.p).sort(() => 0.5 - Math.random());
+                    keys.forEach((k, kIdx) => {
+                        let opts = `<option value="">---</option>`;
+                        vals.forEach(v => opts += `<option value="${v}">${v}</option>`);
+                        html += `<div class="match-row"><div class="match-label">${k}</div><select id="match-${i}-${kIdx}">${opts}</select></div>`;
+                    });
+                    html += `</div>`;
+                }
+                else { // Input/Num
+                    html += `<input type="text" id="ans-${i}" placeholder="Votre réponse...">`;
+                }
+
+                html += `<div class="feedback" id="feed-${i}"></div>`;
+                div.innerHTML = html;
+                container.appendChild(div);
+            });
+        }
+
+        // Selection Logic
+        window.sel = function(el, qId, val) {
+            const parent = el.parentNode;
+            Array.from(parent.children).forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
+            document.getElementById(`ans-${qId}`).value = val;
+        }
+
+        function checkAnswers() {
+            const data = currentExam[currentTrackIdx];
+            // Disable button to prevent double checking
+            document.getElementById('next-btn').disabled = true;
+
+            data.questions.forEach((q, i) => {
+                const feed = document.getElementById(`feed-${i}`);
+                let isRight = false;
+                
+                catScores[q.cat].m++;
+                maxScore++;
+
+                if (q.t === 'mcq') {
+                    // Value stored is the original index
+                    if (document.getElementById(`ans-${i}`).value == q.a) isRight = true;
+                }
+                else if (q.t === 'tf') {
+                    if (document.getElementById(`ans-${i}`).value === String(q.a)) isRight = true;
+                }
+                else if (q.t === 'match') {
+                    let all = true;
+                    Object.keys(q.p).forEach((k, kIdx) => {
+                        if(document.getElementById(`match-${i}-${kIdx}`).value !== q.p[k]) all = false;
+                    });
+                    if (all) isRight = true;
+                }
+                else {
+                    const val = document.getElementById(`ans-${i}`).value.trim().toLowerCase();
+                    const ans = String(q.a).toLowerCase();
+                    // Fuzzy match
+                    if (val === ans || (val.length > 2 && ans.includes(val))) isRight = true;
+                    if (ans === "chewing-gums" && val.includes("bonbon")) isRight = true;
+                }
+
+                feed.style.display = 'block';
+                if (isRight) {
+                    score++;
+                    catScores[q.cat].g++;
+                    feed.innerHTML = "✅ Correct !";
+                    feed.className = "feedback good";
+                } else {
+                    let txt = q.a;
+                    if (q.t === 'mcq') txt = q.o[q.a];
+                    if (q.t === 'tf') txt = q.a ? "Vrai" : "Faux";
+                    if (q.t === 'match') txt = "Voir correspondances";
+                    
+                    feed.innerHTML = `❌ Faux. Réponse : <strong>${txt}</strong>`;
+                    if(q.expl) feed.innerHTML += `<br>ℹ️ ${q.expl}`;
+                    feed.className = "feedback bad";
+                }
+            });
+
+            // Transition
+            setTimeout(() => {
+                document.getElementById('next-btn').disabled = false;
+                if (currentTrackIdx < 2) {
+                    loadTrack(currentTrackIdx + 1);
+                } else {
+                    finishExam();
+                }
+            }, 3000); // 3 seconds to review answers
+        }
+
+        function finishExam() {
+            document.getElementById('exam-ui').classList.add('hidden');
+            document.getElementById('results').classList.remove('hidden');
+
+            const totalTime = Math.floor((new Date() - startTime)/1000);
+            const m = Math.floor(totalTime/60);
+            const s = totalTime%60;
+            const avg = Math.round(totalTime/3);
+            const perc = Math.round((score/maxScore)*100);
+
+            let weak = "Aucun";
+            let minP = 101;
+            const labels = {'global':'Compréhension Globale', 'detail':'Détails', 'num':'Chiffres'};
+            
+            for(let k in catScores) {
+                if(catScores[k].m > 0) {
+                    let p = (catScores[k].g / catScores[k].m) * 100;
+                    if(p < minP) { minP = p; weak = labels[k]; }
+                }
+            }
+
+            document.getElementById('final-score').innerText = `${score}/${maxScore}`;
+            document.getElementById('res-time').innerText = `${m}m ${s}s`;
+            document.getElementById('res-acc').innerText = `${perc}%`;
+            document.getElementById('res-weak').innerText = weak + ` (${Math.round(minP)}%)`;
+            document.getElementById('res-avg').innerText = `${avg}s`;
+
+            if(!API_URL.includes("PASTE")) {
+                const payload = {
+                    app_secret: "IB_FRENCH_2025_SECURE",
+                    sheetName: "Listening_Analytics",
+                    date: new Date().toLocaleDateString('en-SG'),
+                    startTime: startTime.toLocaleTimeString('en-SG'),
+                    duration: `${m}m ${s}s`,
+                    score: score,
+                    total: maxScore,
+                    percentage: `${perc}%`,
+                    avgTimePerTrack: avg,
+                    weakness: weak,
+                    catScores: {
+                        global: `${catScores.global.g}/${catScores.global.m}`,
+                        detail: `${catScores.detail.g}/${catScores.detail.m}`,
+                        num: `${catScores.num.g}/${catScores.num.m}`
+                    }
+                };
+
+                fetch(API_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(payload)
+                }).then(() => {
+                    document.getElementById('api-status').innerText = "✅ Résultats sauvegardés !";
+                    document.getElementById('api-status').style.color = "green";
+                });
+            }
+        }
+    </script>
+</body>
+</html>
