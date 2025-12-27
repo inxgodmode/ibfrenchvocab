@@ -170,7 +170,6 @@
         <h2>Texte A</h2>
         
         <!-- IMAGE PLACEHOLDER FOR TEXT A -->
-        <!-- Save your screenshot as imageA.png in the same folder -->
         <img src="imageA.png" alt="Illustration Texte A" class="exam-image" onerror="this.style.display='none'">
         
         <p><i>Vous allez entendre l’ingénieure automobile Marie Lafont, qui vient dans un lycée, parler de la voiture électrique aux élèves de seconde.</i></p>
@@ -208,7 +207,6 @@
         <h2>Texte B</h2>
 
         <!-- IMAGE PLACEHOLDER FOR TEXT B -->
-        <!-- Save your screenshot as imageB.png in the same folder -->
         <img src="imageB.png" alt="Illustration Texte B" class="exam-image" onerror="this.style.display='none'">
 
         <p><i>Vous allez entendre Julien aider sa mère à utiliser une application.</i></p>
@@ -272,7 +270,6 @@
         <h2>Texte C</h2>
         
         <!-- IMAGE PLACEHOLDER FOR TEXT C -->
-        <!-- Save your screenshot as imageC.png in the same folder -->
         <img src="imageC.png" alt="Illustration Texte C" class="exam-image" onerror="this.style.display='none'">
 
         <p><i>Vous allez entendre Bruno interviewer Alex pour son podcast. À 30 ans, Alex habite toujours chez ses parents.</i></p>
@@ -364,7 +361,7 @@
 
 <script>
     // --- CONFIGURATION ---
-    // PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL HERE
+    // Using the URL provided
     const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby7UiAGk7Ah2SSemfZTALa-STQBJWS4U8Sskq6x44Y16HfVC4by1yysLtXzuU_ABtwk/exec'; 
 
     // --- ENCODED ANSWERS (Base64) ---
@@ -431,7 +428,7 @@
             let possibleAnswers = encodedKeys[q].map(decode);
             let isCorrect = false;
             possibleAnswers.forEach(ans => {
-                if (userVal.includes(ans)) isCorrect = true;
+                if (ans !== "" && userVal.includes(ans)) isCorrect = true;
             });
             if (isCorrect) {
                 score++;
@@ -485,6 +482,7 @@
 
         clearInterval(timerInterval);
         
+        // Disable inputs
         let allInputs = document.querySelectorAll('input');
         allInputs.forEach(i => i.disabled = true);
         document.getElementById('submit-btn').style.display = 'none';
@@ -495,9 +493,11 @@
         let results = calculateResults();
         let avgTime = (timeSpent / 21).toFixed(1); 
 
+        // Show result on screen
         document.getElementById('score-display').innerText = `${results.score} / 25`;
         document.getElementById('result-modal').style.display = 'flex';
 
+        // Payload
         let payload = {
             name: name,
             score: results.score,
@@ -507,21 +507,20 @@
             answers: results.answers
         };
 
-        if (GOOGLE_SCRIPT_URL !== 'https://script.google.com/macros/s/AKfycby7UiAGk7Ah2SSemfZTALa-STQBJWS4U8Sskq6x44Y16HfVC4by1yysLtXzuU_ABtwk/exec') {
-            fetch(GOOGLE_SCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            }).then(() => {
-                console.log("Data sent to sheet");
-            }).catch(err => {
-                console.error("Error sending data", err);
-                alert("Error saving data to cloud. Please take a screenshot of your score.");
-            });
-        } else {
-            console.log("Google Script URL not configured.");
-        }
+        // Send to Google Sheets - FIXED FETCH
+        fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+                'Content-Type': 'text/plain'
+            },
+            body: JSON.stringify(payload)
+        }).then(() => {
+            console.log("Data sent to sheet");
+        }).catch(err => {
+            console.error("Error sending data", err);
+            alert("Connection error: " + err.message);
+        });
     }
 </script>
 </body>
