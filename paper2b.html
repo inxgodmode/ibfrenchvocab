@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>French B SL - Paper 2 - Listening Comprehension (May 2024)</title>
+<style>
+    :root {
+        --ib-blue: #004d9a;
+        --light-gray: #f4f4f4;
+        --border-color: #ccc;
+    }
+    body {
+        font-family: "Arial", sans-serif;
+        line-height: 1.6;
+        color: #333;
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        user-select: none; /* Prevent text selection */
+        -webkit-user-select: none;
+    }
+    header {
+        border-bottom: 2px solid var(--ib-blue);
+        padding-bottom: 20px;
+        margin-bottom: 30px;
+    }
+    h1 { color: var(--ib-blue); font-size: 24px; }
+    h2 { background-color: var(--light-gray); padding: 10px; border-left: 5px solid var(--ib-blue); margin-top: 30px; }
+    h3 { font-size: 16px; margin-top: 20px; }
+    
+    /* Image Styling */
+    .exam-image {
+        display: block;
+        max-width: 100%;
+        height: auto;
+        margin: 20px auto;
+        border: 1px solid #eee;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .audio-container {
+        position: sticky;
+        top: 0;
+        background: white;
+        padding: 15px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        z-index: 100;
+        text-align: center;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .question-block {
+        margin-bottom: 25px;
+        padding: 15px;
+        border: 1px solid transparent;
+    }
+    .question-block:hover {
+        background-color: #fafafa;
+        border-color: #eee;
+    }
+    
+    label { display: block; margin-bottom: 8px; cursor: pointer; }
+    input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border: 1px solid #aaa;
+        border-radius: 4px;
+        font-family: monospace;
+    }
+    textarea {
+        width: 100%;
+        height: 80px;
+        padding: 10px;
+        margin-top: 5px;
+        border: 1px solid #aaa;
+        border-radius: 4px;
+    }
+
+    /* Grid for Texte C */
+    .grid-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+    .grid-table th, .grid-table td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: center;
+    }
+    .grid-table th { background-color: var(--light-gray); text-align: left; }
+    .grid-table td.option { width: 80px; }
+
+    #student-info {
+        background: #eef;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+
+    #submit-btn {
+        background-color: var(--ib-blue);
+        color: white;
+        padding: 15px 30px;
+        border: none;
+        border-radius: 5px;
+        font-size: 18px;
+        cursor: pointer;
+        display: block;
+        width: 100%;
+        margin-top: 40px;
+    }
+    #submit-btn:hover { background-color: #003366; }
+
+    /* Result Modal */
+    #result-modal {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.8);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+    }
+    .modal-content {
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        max-width: 500px;
+        text-align: center;
+    }
+    .hidden { display: none; }
+    
+    .note-box {
+        border: 1px solid #333;
+        height: 100px;
+        margin-top: 10px;
+        padding: 5px;
+        font-size: 12px;
+        color: #666;
+    }
+</style>
+</head>
+<body oncontextmenu="return false;">
+
+    <div id="student-info">
+        <h3>Student Details</h3>
+        <label>Full Name: <input type="text" id="studentName" placeholder="Enter your name"></label>
+        <p>Instructions: Do not refresh the page. Audio controls are at the top. Answers are submitted automatically to the teacher upon completion.</p>
+    </div>
+
+    <div class="audio-container">
+        <audio controls controlsList="nodownload">
+            <source src="audio.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+        <div id="timer" style="margin-top:5px; font-weight:bold;">Time: 00:00</div>
+    </div>
+
+    <header>
+        <h1>French B SL - Paper 2 - Listening</h1>
+        <p>Code: 2224–2292</p>
+    </header>
+
+    <!-- TEXTE A -->
+    <section id="texte-a">
+        <h2>Texte A</h2>
+        
+        <!-- IMAGE PLACEHOLDER FOR TEXT A -->
+        <!-- Save your screenshot as imageA.png in the same folder -->
+        <img src="imageA.png" alt="Illustration Texte A" class="exam-image" onerror="this.style.display='none'">
+        
+        <p><i>Vous allez entendre l’ingénieure automobile Marie Lafont, qui vient dans un lycée, parler de la voiture électrique aux élèves de seconde.</i></p>
+        
+        <div class="question-block" data-section="A">
+            <label>1. En ce qui concerne les véhicules électriques, de quoi va parler Marie ?</label>
+            <input type="text" name="q1" autocomplete="off">
+        </div>
+
+        <div class="question-block" data-section="A">
+            <label>2. À qui les efforts de l’industrie automobile sont-ils adressés ?</label>
+            <input type="text" name="q2" autocomplete="off">
+        </div>
+
+        <div class="note-box">Notes/Notas:</div>
+
+        <div class="question-block" data-section="A">
+            <label>3. Quel est l’aspect particulier du moteur ?</label>
+            <input type="text" name="q3" autocomplete="off">
+        </div>
+
+        <div class="question-block" data-section="A">
+            <label>4. Comment sont les réparations de la voiture électrique ?</label>
+            <input type="text" name="q4" autocomplete="off">
+        </div>
+
+        <div class="question-block" data-section="A">
+            <label>5. Pourquoi certains pays donnent-ils aux acheteurs des bénéfices économiques ?</label>
+            <input type="text" name="q5" autocomplete="off">
+        </div>
+    </section>
+
+    <!-- TEXTE B -->
+    <section id="texte-b">
+        <h2>Texte B</h2>
+
+        <!-- IMAGE PLACEHOLDER FOR TEXT B -->
+        <!-- Save your screenshot as imageB.png in the same folder -->
+        <img src="imageB.png" alt="Illustration Texte B" class="exam-image" onerror="this.style.display='none'">
+
+        <p><i>Vous allez entendre Julien aider sa mère à utiliser une application.</i></p>
+
+        <div class="question-block" data-section="B">
+            <label>6. Choisissez les <b>cinq</b> affirmations vraies. [5 points]</label>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <label><input type="checkbox" name="q6" value="A"> A. Julien entend sa mère la première fois qu’elle l’appelle.</label>
+                <label><input type="checkbox" name="q6" value="B"> B. Julien est dans sa chambre quand sa mère l’appelle.</label>
+                <label><input type="checkbox" name="q6" value="C"> C. Julien est fils unique.</label>
+                <label><input type="checkbox" name="q6" value="D"> D. Julien pense que passer un appel vidéo est simple.</label>
+                <label><input type="checkbox" name="q6" value="E"> E. C’est la première fois que Julien est appelé « mon lapin ».</label>
+                <label><input type="checkbox" name="q6" value="F"> F. La mère de Julien n’a pas d’ordinateur.</label>
+                <label><input type="checkbox" name="q6" value="G"> G. Julien dit que le téléphone de sa mère est vieux.</label>
+                <label><input type="checkbox" name="q6" value="H"> H. Il faut que Julien installe le programme dont ils ont besoin.</label>
+                <label><input type="checkbox" name="q6" value="I"> I. La mère de Julien a souvent besoin d’aide avec la technologie.</label>
+                <label><input type="checkbox" name="q6" value="J"> J. La mère de Julien a de très bons yeux.</label>
+            </div>
+        </div>
+
+        <p><i>Choisissez la bonne réponse.</i></p>
+
+        <div class="question-block" data-section="B">
+            <label>7. La première fois, l’application ne s’ouvre pas parce que la mère de Julien clique…</label>
+            <label><input type="radio" name="q7" value="A"> A. trop vite.</label>
+            <label><input type="radio" name="q7" value="B"> B. une fois dessus.</label>
+            <label><input type="radio" name="q7" value="C"> C. au mauvais endroit.</label>
+        </div>
+
+        <div class="question-block" data-section="B">
+            <label>8. Ensuite, Julien décide…</label>
+            <label><input type="radio" name="q8" value="A"> A. de laisser sa mère seule.</label>
+            <label><input type="radio" name="q8" value="B"> B. d’attendre silencieusement.</label>
+            <label><input type="radio" name="q8" value="C"> C. d’ouvrir l’application pour sa mère.</label>
+        </div>
+
+        <div class="question-block" data-section="B">
+            <label>9. Pour passer un appel vidéo à Jessica, la mère doit écrire…</label>
+            <label><input type="radio" name="q9" value="A"> A. son nom.</label>
+            <label><input type="radio" name="q9" value="B"> B. son numéro.</label>
+            <label><input type="radio" name="q9" value="C"> C. son adresse email.</label>
+        </div>
+
+        <div class="question-block" data-section="B">
+            <label>10. Quand ça sonne, Julien est content parce qu’il…</label>
+            <label><input type="radio" name="q10" value="A"> A. va parler à Jessica.</label>
+            <label><input type="radio" name="q10" value="B"> B. pense que sa mère est autonome.</label>
+            <label><input type="radio" name="q10" value="C"> C. a passé un bon moment avec sa mère.</label>
+        </div>
+
+        <div class="question-block" data-section="B">
+            <label>11. Quand la conversation se termine, …</label>
+            <label><input type="radio" name="q11" value="A"> A. Jessica répond à l’appel vidéo.</label>
+            <label><input type="radio" name="q11" value="B"> B. Julien appelle sa mère « mon lapin ».</label>
+            <label><input type="radio" name="q11" value="C"> C. Julien est énervé contre sa mère.</label>
+        </div>
+    </section>
+
+    <!-- TEXTE C -->
+    <section id="texte-c">
+        <h2>Texte C</h2>
+        
+        <!-- IMAGE PLACEHOLDER FOR TEXT C -->
+        <!-- Save your screenshot as imageC.png in the same folder -->
+        <img src="imageC.png" alt="Illustration Texte C" class="exam-image" onerror="this.style.display='none'">
+
+        <p><i>Vous allez entendre Bruno interviewer Alex pour son podcast. À 30 ans, Alex habite toujours chez ses parents.</i></p>
+        <p><i>Pour chaque affirmation, cochez [✓] une option.</i></p>
+
+        <div class="question-block" data-section="C">
+            <table class="grid-table">
+                <thead>
+                    <tr>
+                        <th>Qui pense quoi ?</th>
+                        <th class="option">Alex</th>
+                        <th class="option">Bruno</th>
+                        <th class="option">Les deux</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>12. Habiter avec ses parents à 30 ans, c’est assez ordinaire.</td>
+                        <td><input type="radio" name="q12" value="A"></td>
+                        <td><input type="radio" name="q12" value="B"></td>
+                        <td><input type="radio" name="q12" value="C"></td>
+                    </tr>
+                    <tr>
+                        <td>13. Vivre seul(e) à 18 ans est difficile.</td>
+                        <td><input type="radio" name="q13" value="A"></td>
+                        <td><input type="radio" name="q13" value="B"></td>
+                        <td><input type="radio" name="q13" value="C"></td>
+                    </tr>
+                    <tr>
+                        <td>14. Conduire pendant 2 heures chaque jour, c’est trop.</td>
+                        <td><input type="radio" name="q14" value="A"></td>
+                        <td><input type="radio" name="q14" value="B"></td>
+                        <td><input type="radio" name="q14" value="C"></td>
+                    </tr>
+                    <tr>
+                        <td>15. Vivre en famille peut être difficile.</td>
+                        <td><input type="radio" name="q15" value="A"></td>
+                        <td><input type="radio" name="q15" value="B"></td>
+                        <td><input type="radio" name="q15" value="C"></td>
+                    </tr>
+                    <tr>
+                        <td>16. Pour habiter ensemble, il faut avoir de bonnes relations.</td>
+                        <td><input type="radio" name="q16" value="A"></td>
+                        <td><input type="radio" name="q16" value="B"></td>
+                        <td><input type="radio" name="q16" value="C"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="note-box">Notes/Notas:</div>
+
+        <div class="question-block" data-section="C">
+            <label>17. Que dit Alex qui montre qu’elle veut quitter la maison de ses parents ?</label>
+            <input type="text" name="q17" autocomplete="off">
+        </div>
+
+        <div class="question-block" data-section="C">
+            <label>18. De quelle couleur sont les murs de la chambre d’Alex ?</label>
+            <input type="text" name="q18" autocomplete="off">
+        </div>
+
+        <div class="question-block" data-section="C">
+            <label>19. De quoi les parents d’Alex sont-ils contents ?</label>
+            <input type="text" name="q19" autocomplete="off">
+        </div>
+
+        <div class="question-block" data-section="C">
+            <label>20. Qu’est-ce que la mère d’Alex dit souvent ?</label>
+            <input type="text" name="q20" autocomplete="off">
+        </div>
+
+        <div class="question-block" data-section="C">
+            <label>21. Comment Alex se sent-elle quand sa mère fait tout à la maison ?</label>
+            <input type="text" name="q21" autocomplete="off">
+        </div>
+    </section>
+
+    <button id="submit-btn" onclick="submitExam()">Submit Examination</button>
+
+    <div id="result-modal">
+        <div class="modal-content">
+            <h2>Examination Submitted</h2>
+            <p>Your results have been recorded.</p>
+            <p id="score-display" style="font-size: 2em; font-weight: bold; color: var(--ib-blue);"></p>
+            <p>You may now close this window.</p>
+        </div>
+    </div>
+
+<script>
+    // --- CONFIGURATION ---
+    // PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL HERE
+    const GOOGLE_SCRIPT_URL = 'YOUR_GOOGLE_SCRIPT_URL_HERE'; 
+
+    // --- ENCODED ANSWERS (Base64) ---
+    const encodedKeys = {
+        q1: ["YXZhbnRhZ2U=", "YXZhbnRhZ2Vz"], 
+        q2: ["cHVibGlj", "Z3JhbmQgcHVibGlj"], 
+        q3: ["c2lsZW5jaWV1eA==", "YnJ1aXQ=", "cG9sbHV0aW9uIHNvbm9yZQ=="], 
+        q4: ["Ym9uIG1hcmNow6k=", "cGFzIGNoZXI=", "cGFzIGNow6hyZQ=="], 
+        q5: ["ZmFjaWxpdGVy", "ZW5jb3VyYWdlcg==", "YXVnbWVudGVy"], 
+        q6: ["QQ==", "Qg==", "RA==", "Rw==", "SQ=="], 
+        q7: "Qg==", 
+        q8: "Qw==", 
+        q9: "QQ==", 
+        q10: "Qg==", 
+        q11: "Qw==", 
+        q12: "QQ==", 
+        q13: "Qg==", 
+        q14: "Qw==", 
+        q15: "QQ==", 
+        q16: "Qw==", 
+        q17: ["w6ljb25vbWlzZQ==", "w6ljb25vbWll"], 
+        q18: ["cm9zZQ=="], 
+        q19: ["YWlkZXI=", "c29pbg=="], 
+        q20: ["bWFpc29u", "csOoZ2xlcw=="], 
+        q21: ["Y291cGFibGU="] 
+    };
+
+    let startTime = new Date();
+    let timerInterval;
+
+    // --- INITIALIZATION ---
+    document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.addEventListener('keydown', function(e) {
+            if (e.keyCode == 123) { return false; } 
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) { return false; } 
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) { return false; } 
+            if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) { return false; } 
+        });
+
+        timerInterval = setInterval(() => {
+            let now = new Date();
+            let diff = Math.floor((now - startTime) / 1000);
+            let mins = Math.floor(diff / 60).toString().padStart(2, '0');
+            let secs = (diff % 60).toString().padStart(2, '0');
+            document.getElementById('timer').innerText = `Time: ${mins}:${secs}`;
+        }, 1000);
+    });
+
+    function decode(str) {
+        try { return atob(str).toLowerCase(); } catch (e) { return ""; }
+    }
+
+    function calculateResults() {
+        let score = 0;
+        let answers = {};
+        let weaknesses = [];
+        let sectionScores = { A: 0, B: 0, C: 0 };
+        
+        const textQuestions = ['q1', 'q2', 'q3', 'q4', 'q5', 'q17', 'q18', 'q19', 'q20', 'q21'];
+        textQuestions.forEach(q => {
+            let userVal = document.querySelector(`input[name="${q}"]`).value.toLowerCase().trim();
+            answers[q] = userVal;
+            let possibleAnswers = encodedKeys[q].map(decode);
+            let isCorrect = false;
+            possibleAnswers.forEach(ans => {
+                if (userVal.includes(ans)) isCorrect = true;
+            });
+            if (isCorrect) {
+                score++;
+                if (parseInt(q.substring(1)) <= 5) sectionScores.A++;
+                else sectionScores.C++;
+            }
+        });
+
+        let q6Checks = document.querySelectorAll('input[name="q6"]:checked');
+        let q6User = Array.from(q6Checks).map(c => c.value);
+        answers['q6'] = q6User;
+        let q6Correct = encodedKeys.q6.map(decode).map(v => v.toUpperCase());
+        let q6Points = 0;
+        q6User.forEach(val => {
+            if (q6Correct.includes(val)) q6Points++;
+            else q6Points = Math.max(0, q6Points - 1); 
+        });
+        score += q6Points;
+        sectionScores.B += q6Points;
+
+        const radioQuestions = ['q7', 'q8', 'q9', 'q10', 'q11', 'q12', 'q13', 'q14', 'q15', 'q16'];
+        radioQuestions.forEach(q => {
+            let selected = document.querySelector(`input[name="${q}"]:checked`);
+            let userVal = selected ? selected.value : "";
+            answers[q] = userVal;
+            let correctVal = decode(encodedKeys[q]).toUpperCase();
+            if (userVal === correctVal) {
+                score++;
+                if (parseInt(q.substring(1)) <= 11) sectionScores.B++;
+                else sectionScores.C++;
+            }
+        });
+
+        if (sectionScores.A < 3) weaknesses.push("Texte A (General Comprehension)");
+        if (sectionScores.B < 6) weaknesses.push("Texte B (Detail & Logic)");
+        if (sectionScores.C < 6) weaknesses.push("Texte C (Inference & Attitude)");
+        if (weaknesses.length === 0) weaknesses.push("None");
+
+        return { score, answers, weaknesses: weaknesses.join(", ") };
+    }
+
+    function submitExam() {
+        let name = document.getElementById('studentName').value;
+        if (!name) {
+            alert("Please enter your name at the top.");
+            window.scrollTo(0,0);
+            return;
+        }
+
+        if(!confirm("Are you sure you want to submit? You cannot change answers afterwards.")) return;
+
+        clearInterval(timerInterval);
+        
+        let allInputs = document.querySelectorAll('input');
+        allInputs.forEach(i => i.disabled = true);
+        document.getElementById('submit-btn').style.display = 'none';
+
+        let endTime = new Date();
+        let timeSpent = Math.floor((endTime - startTime) / 1000); 
+        
+        let results = calculateResults();
+        let avgTime = (timeSpent / 21).toFixed(1); 
+
+        document.getElementById('score-display').innerText = `${results.score} / 25`;
+        document.getElementById('result-modal').style.display = 'flex';
+
+        let payload = {
+            name: name,
+            score: results.score,
+            timeSpent: timeSpent,
+            avgTime: avgTime,
+            weaknesses: results.weaknesses,
+            answers: results.answers
+        };
+
+        if (GOOGLE_SCRIPT_URL !== 'https://script.google.com/macros/s/AKfycby7UiAGk7Ah2SSemfZTALa-STQBJWS4U8Sskq6x44Y16HfVC4by1yysLtXzuU_ABtwk/exec') {
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            }).then(() => {
+                console.log("Data sent to sheet");
+            }).catch(err => {
+                console.error("Error sending data", err);
+                alert("Error saving data to cloud. Please take a screenshot of your score.");
+            });
+        } else {
+            console.log("Google Script URL not configured.");
+        }
+    }
+</script>
+</body>
+</html>
